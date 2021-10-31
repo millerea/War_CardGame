@@ -12,8 +12,6 @@ namespace War_ConsoleApp
             Console.Write("Begin War Main...\n");
 
             //TODO define controller / game play
-            //TODO - how to shuffle
-            //TODO - how to random draw
             //TODO - how to deal
             //TODO - how to play 1v1
             //TODO - how to compare drawn cards?
@@ -23,9 +21,15 @@ namespace War_ConsoleApp
             //TODO define a deck of cards
             Deck deck = new Deck();
             deck.FillDeck();
-            deck.PrintDeck(); //Deck prints and have a full deck
+            //deck.PrintDeck(); //Deck prints and have a full deck
 
             //TODO Shuffle deck
+            deck.ShuffleDeck(deck.GetDeck(), 52);
+            //deck.PrintDeck();
+
+
+
+
 
 
 

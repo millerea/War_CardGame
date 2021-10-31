@@ -7,8 +7,11 @@ using System.Text;
 namespace War_ConsoleApp
 {
     public class Deck
-    {
-        public List<Card> Cards = new List<Card>();
+    {        
+        public List<Card> GetDeck()
+        {
+            return mCards;
+        }
 
         public void FillDeck()
         {
@@ -19,16 +22,34 @@ namespace War_ConsoleApp
                 War_ConsoleApp.Card.Suite suite = (War_ConsoleApp.Card.Suite)(Math.Floor((decimal)i / 13));
                 //Add 2 to value as a cards start a 2
                 int val = i % 13 + 2;
-                Cards.Add(new Card(val, suite));
+                mCards.Add(new Card(val, suite));
             }
         }
 
         public void PrintDeck()
         {
-            foreach (Card card in this.Cards)
+            foreach (Card card in this.mCards)
             {
                 Console.WriteLine(Name(card.mValue, card.mSuite));
             }
+        }
+
+        public List<Card> ShuffleDeck(List<Card> aDeck, int n)
+        {
+            DateTime dateTime = DateTime.Now;
+            int timeMsSinceMidnight = (int)dateTime.TimeOfDay.TotalMilliseconds;
+            Random rand = new Random(timeMsSinceMidnight);
+   
+            for (int l = n-1; l > 0; l--)
+            {
+                int j = rand.Next(0, l + 1);
+
+                Card tE = aDeck[l];
+                aDeck[l] = aDeck[j];
+                aDeck[j] = tE;
+            }
+
+            return aDeck;
         }
 
 
@@ -62,5 +83,8 @@ namespace War_ConsoleApp
             }
             return name;
         }
+
+        private List<Card> mCards = new List<Card>();
+
     }
 }
