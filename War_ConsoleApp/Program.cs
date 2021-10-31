@@ -11,7 +11,6 @@ namespace War_ConsoleApp
         {
             Console.Write("Begin War Main...\n");
 
-            //TODO define a deck of cards
             //TODO define controller / game play
             //TODO - how to shuffle
             //TODO - how to random draw
@@ -20,9 +19,16 @@ namespace War_ConsoleApp
             //TODO - how to compare drawn cards?
             //TODO what else are you missing?
 
+
+            //TODO define a deck of cards
             Deck deck = new Deck();
             deck.FillDeck();
-            deck.PrintDeck();
+            deck.PrintDeck(); //Deck prints and have a full deck
+
+            //TODO Shuffle deck
+
+
+
 
             Console.Read();
         }
