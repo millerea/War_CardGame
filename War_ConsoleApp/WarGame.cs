@@ -138,12 +138,41 @@ namespace War_ConsoleApp
                 //War condition
                 Console.WriteLine("1, 2, 3, 4 I Declare War...");
 
-                mResults.Insert(0, "");
-                mResults.Insert(1, "");
+                mResults = AdjudicateWar(playerQueue, computerQueue);
             }
 
             return mResults;
         }
+
+
+        private List<string> AdjudicateWar(Queue<Card> aPlayerQueue, Queue<Card> aComputerQueue)
+        {
+            //Tie need to have a War
+            //3-Cards per player face down (wager)
+            //4th card face up 
+
+            //4th card winner takes all 10 cards
+            //two original tieing + 2players*(3cards) + 2 show cards
+            //2 + 6 + 2 = 10 cards to move
+
+            //If 4th turn cards are tied then face up next cards until winner
+
+            //TODO start here by preparing war
+
+
+
+
+
+
+
+
+
+
+            return mResults;
+        }
+
+
+
 
         private void myTimer_Tick(object sender, EventArgs e)
         {
