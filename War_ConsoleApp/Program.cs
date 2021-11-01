@@ -18,8 +18,8 @@ namespace War_ConsoleApp
             //TODO what else are you missing?
 
             WarGame game = new WarGame();
-            bool val = game.PromptWarGame(); //TODO put this back in for prompting
-
+            //bool val = game.PromptWarGame(); //TODO put this back in for prompting
+            bool val = true;
             if (val == true)//TODO put back in for prompting
             {
                 game.NewGame();
