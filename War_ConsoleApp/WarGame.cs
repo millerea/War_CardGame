@@ -184,7 +184,6 @@ namespace War_ConsoleApp
             {
                 mTimer.Stop();
                 mTimer.Close();
-
                 this.StartGame();
             }
 

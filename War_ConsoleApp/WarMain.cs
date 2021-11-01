@@ -5,7 +5,7 @@ using System.Text;
 
 namespace War_ConsoleApp
 {
-    class Program
+    class WarMain
     {
         static void Main(string[] args)
         {
