@@ -24,6 +24,8 @@ namespace War_ConsoleApp
                 int val = i % 13 + 2;
                 mCards.Add(new Card(val, suite));
             }
+
+            Console.WriteLine("AI has the deck of cards");
         }
 
         public void PrintDeck()
@@ -49,11 +51,38 @@ namespace War_ConsoleApp
                 aDeck[j] = tE;
             }
 
+            Console.WriteLine("AI has shuffled the cards");
+
             return aDeck;
         }
 
+        public Queue<Card>[] SplitDeck(List<Card> aDeck)
+        {
+            Queue<Card>[] twoListArray = new Queue<Card>[2];
+            twoListArray[0] = new Queue<Card>();
+            twoListArray[1] = new Queue<Card>();
+            
+            for (int i = 0; i < 52; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    twoListArray[0].Enqueue(aDeck[i]);
+                }
+                else
+                {
+                    twoListArray[1].Enqueue(aDeck[i]);
+                }
+            }
 
-        private string Name(int aValue, War_ConsoleApp.Card.Suite aSuite)
+            Console.WriteLine("AI has split the deck");
+
+            return twoListArray;
+        }
+
+
+
+
+        public string Name(int aValue, War_ConsoleApp.Card.Suite aSuite)
         {
             return NamedValue(aValue).ToString() + " of " + aSuite.ToString();
         }

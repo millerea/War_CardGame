@@ -17,21 +17,17 @@ namespace War_ConsoleApp
             //TODO - how to compare drawn cards?
             //TODO what else are you missing?
 
+            WarGame game = new WarGame();
+            bool val = game.PromptWarGame(); //TODO put this back in for prompting
 
-            //TODO define a deck of cards
-            Deck deck = new Deck();
-            deck.FillDeck();
-            //deck.PrintDeck(); //Deck prints and have a full deck
-
-            //TODO Shuffle deck
-            deck.ShuffleDeck(deck.GetDeck(), 52);
-            //deck.PrintDeck();
-
-
-
-
-
-
+            if (val == true)//TODO put back in for prompting
+            {
+                game.NewGame();
+            }
+            else
+            {
+                //No game END / ESC
+            }
 
 
             Console.Read();
