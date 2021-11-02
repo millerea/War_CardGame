@@ -15,6 +15,12 @@ namespace War_ConsoleApp
             Spades = 3
         }
 
+        public Card(int aValue, Suite aSuite)
+        {
+            this.mValue = aValue;
+            this.mSuite = aSuite;
+        }
+
         public int mValue
         {
             get;
@@ -25,12 +31,6 @@ namespace War_ConsoleApp
         {
             get;
             set;
-        }
-
-        public Card(int aValue, Suite aSuite)
-        {
-            this.mValue = aValue;
-            this.mSuite = aSuite;
         }
     }
 }

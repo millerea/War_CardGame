@@ -87,16 +87,34 @@ namespace War_ConsoleApp
             //Alternatively, because winning the entire deck can take a long time, 
             //the first player to win three wars is the winner. 
 
-            while ((aPlayerOne.mPlayerHand.Count() > 0) && (aPlayerTwo.mPlayerHand.Count() > 0) && 
-                aPlayerOne.mWarsWon < 3 && aPlayerTwo.mWarsWon < 3)
+            while ((aPlayerOne.playerHand.Count() > 0) && (aPlayerTwo.playerHand.Count() > 0) && 
+                aPlayerOne.warsWon < 3 && aPlayerTwo.warsWon < 3)
             {
-                List<string> resultsReturned = RunSingleRound(aPlayerOne.mPlayerHand, aPlayerTwo.mPlayerHand);
+                Console.WriteLine("\n");
+                List<string> resultsReturned = RunSingleRound(aPlayerOne.playerHand, aPlayerTwo.playerHand);
 
                 if (resultsReturned != null)
                 {
                     Console.WriteLine(resultsReturned.ElementAt(0) + " WON ");
                     Console.WriteLine(resultsReturned.ElementAt(1));
                 }
+
+                Console.WriteLine("\n Are you ready for the next round?  Press Enter");
+            }
+
+
+
+            if (aPlayerOne.warsWon == 3)
+            {
+                Console.WriteLine("PLAYER WINS, 3 Wars won");
+                Console.WriteLine("Player Card count: " + aPlayerOne.playerHand.Count.ToString());
+                Console.WriteLine("AI Card count: " + aPlayerTwo.playerHand.Count.ToString());
+            }
+            else if (aPlayerTwo.warsWon == 3)
+            {
+                Console.WriteLine("AI WINS, 3 Wars won");
+                Console.WriteLine("AI Card count: " + aPlayerTwo.playerHand.Count.ToString());
+                Console.WriteLine("Player Card count: " + aPlayerOne.playerHand.Count.ToString());
             }
         }
 
@@ -106,8 +124,8 @@ namespace War_ConsoleApp
             //results[0] = string winning player name
             //results[1] = winning condition 
 
-            Card playerOneCard = (Card) playerQueue.Dequeue();
-            Card computerCard = (Card) computerQueue.Dequeue();
+            Card playerOneCard = playerQueue.Dequeue();
+            Card computerCard = computerQueue.Dequeue();
 
             if (playerOneCard.mValue > computerCard.mValue)
             {
@@ -115,7 +133,7 @@ namespace War_ConsoleApp
                 condition += " Beats AI ";
                 condition += mDeck.Name(computerCard.mValue, computerCard.mSuite);
 
-                mResults.Insert(0, mPlayerOne.mPlayerName);
+                mResults.Insert(0, mPlayerOne.getPlayerName());
                 mResults.Insert(1, condition);
 
                 playerQueue.Enqueue(playerOneCard);
@@ -127,7 +145,7 @@ namespace War_ConsoleApp
                 condition += " Beats Player ";
                 condition += mDeck.Name(playerOneCard.mValue, playerOneCard.mSuite);
 
-                mResults.Insert(0, mPlayerTwo.mPlayerName);
+                mResults.Insert(0, mPlayerTwo.getPlayerName());
                 mResults.Insert(1, condition);
 
                 computerQueue.Enqueue(playerOneCard);
@@ -139,8 +157,20 @@ namespace War_ConsoleApp
                 Console.WriteLine("1, 2, 3, 4 I Declare War...");
 
                 mResults = AdjudicateWar(playerQueue, computerQueue);
+
+                if (mResults.ElementAt(0).Contains("AI"))
+                {
+                    computerQueue.Enqueue(playerOneCard);
+                    computerQueue.Enqueue(computerCard);
+                }
+                else
+                {
+                    playerQueue.Enqueue(playerOneCard);
+                    playerQueue.Enqueue(computerCard);
+                }
             }
 
+            
             return mResults;
         }
 
@@ -157,20 +187,116 @@ namespace War_ConsoleApp
 
             //If 4th turn cards are tied then face up next cards until winner
 
+            //If cards are low and can't face down correct number then the last card up
+
             //TODO start here by preparing war
 
 
+            Queue<Card> sixCards = new Queue<Card>();
+
+            Card playerCard = null;
+            bool playerOut = false;
+
+            Card computerCard = null;
+            bool computerOut = false;
 
 
+            bool exit = false;
 
+            do
+            {
+                if (aPlayerQueue.Count() > 4)
+                {
+                    for (int c = 0; c < 3; c++)
+                    {
+                        sixCards.Enqueue(aPlayerQueue.Dequeue());
+                    }
+                }
 
+                if (aComputerQueue.Count() > 4)
+                {
+                    for (int c = 0; c < 3; c++)
+                    {
+                        sixCards.Enqueue(aComputerQueue.Dequeue());
+                    }
+                }
 
+                playerCard = aPlayerQueue.Dequeue();
+                computerCard = aComputerQueue.Dequeue();
 
+                if (aPlayerQueue.Count == 0)
+                {
+                    playerOut = true;
+                    exit = true;
+                }
 
+                if (aComputerQueue.Count == 0)
+                {
+                    computerOut = true;
+                    exit = true;
+                }
+
+                if (playerCard.mValue > computerCard.mValue)
+                {
+                    sixCards.Enqueue(playerCard);
+                    sixCards.Enqueue(computerCard);
+                    exit = true;
+
+                    if (!playerOut && !computerOut)
+                    {
+                        mResults.Insert(0, "Player");
+                        mResults.Insert(1, mDeck.Name(playerCard.mValue, playerCard.mSuite) +
+                                        " beats AI " + mDeck.Name(computerCard.mValue, computerCard.mSuite));
+                    }
+                    else if (computerOut)
+                    {
+                        mResults.Insert(0, "Player Wins Game!!!");
+                        mResults.Insert(1, mDeck.Name(playerCard.mValue, playerCard.mSuite) +
+                                        " beats AI " + mDeck.Name(computerCard.mValue, computerCard.mSuite));
+                    }
+
+                    for (int z = sixCards.Count; z > 0 ; z--)
+                    {
+                        aPlayerQueue.Enqueue(sixCards.Dequeue());
+                    }
+
+                    this.mPlayerOne.warsWon++;
+                }
+                else if (playerCard.mValue < computerCard.mValue)
+                {
+                    sixCards.Enqueue(playerCard);
+                    sixCards.Enqueue(computerCard);
+                    exit = true;
+
+                    if (!playerOut && !computerOut)
+                    {
+                        mResults.Insert(0, "AI");
+                        mResults.Insert(1, mDeck.Name(computerCard.mValue, computerCard.mSuite) +
+                                        " beats Player " + mDeck.Name(playerCard.mValue, playerCard.mSuite));
+                    }
+                    else if (playerOut)
+                    {
+                        mResults.Insert(0, "AI Wins Game!!!");
+                        mResults.Insert(1, mDeck.Name(computerCard.mValue, computerCard.mSuite) +
+                                        " beats Player " + mDeck.Name(playerCard.mValue, playerCard.mSuite));
+                    }
+
+                    for (int z = sixCards.Count; z > 0; z--)
+                    {
+                        aComputerQueue.Enqueue(sixCards.Dequeue());
+                    }
+
+                    this.mPlayerTwo.warsWon++;
+                }
+                else if (playerCard.mValue == computerCard.mValue)
+                {
+                    sixCards.Enqueue(playerCard);
+                    sixCards.Enqueue(computerCard);
+                }
+            } while (!exit && playerCard.mValue == computerCard.mValue);
 
             return mResults;
         }
-
 
 
 

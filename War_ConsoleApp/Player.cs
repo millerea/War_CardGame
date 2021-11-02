@@ -9,28 +9,52 @@ namespace War_ConsoleApp
     {
         public Player(string aPlayerName, Queue<Card> aPlayerHand)
         {
+            this.mPlayerName = aPlayerName;
+            this.mPlayerHand = aPlayerHand;
+            this.mIsInitialized = false;
+            this.mWarsWon = 0;
+        }
+
+        public string getPlayerName()
+        {
+            return mPlayerName;
+        }
+        public void setPlayerName(string aPlayerName)
+        {
             mPlayerName = aPlayerName;
-            mPlayerHand = aPlayerHand;
-            mWarsWon = 0;
-            mIsInitialized = true;
         }
 
-        public String mPlayerName
+        public Queue<Card> playerHand
         {
-            get;
-            set;
-        }
-        public Queue<Card> mPlayerHand
-        {
-            get;
-            set;
+            get { return mPlayerHand; }
+            set
+            {
+                mPlayerHand = value;   
+            }
         }
 
-        public int mWarsWon
+        public int warsWon
         {
-            get;
-            set;
+            get{return mWarsWon;}
+            set
+            {
+                mWarsWon = value;
+            }
         }
-        bool mIsInitialized = false;
+
+        public bool init
+        {
+            get { return mIsInitialized; }
+            set
+            {
+                mIsInitialized = value;
+            }
+        }
+
+        private Queue<Card> mPlayerHand;
+        private string mPlayerName;
+        private int mWarsWon;
+        private bool mIsInitialized;
+
     }
 }
