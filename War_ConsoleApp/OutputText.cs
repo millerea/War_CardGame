@@ -34,6 +34,7 @@ namespace War_ConsoleApp
             pString = pString.Replace(empty, "J:" + aComputerCard.mValue.ToString() + "_" + aComputerCard.mSuite.ToString());
 
             List<string> output = new List<string>();
+            output.Add("\n");
             output.Add("                           WOPR WarGame                         ");
             output.Add("----------------------------------------------------------------");
             output.Add("                           Player vs. Joshua                    ");
@@ -61,9 +62,9 @@ namespace War_ConsoleApp
         public void WriteCurrentMetrics(Player aPlayer, Player aComputer)
         {
             Console.WriteLine("                 Player cards remaining: " + aPlayer.playerHand.Count);
-            Console.WriteLine("                 Player has Won " + aPlayer.warsWon.ToString() + " Wars\n");
+            Console.WriteLine("                 Player has Won " + aPlayer.warsWon.ToString() + " War\n");
             Console.WriteLine("                 Joshua cards remaining: " + aComputer.playerHand.Count);
-            Console.WriteLine("                 Joshua has Won " + aComputer.warsWon.ToString() + " Wars");
+            Console.WriteLine("                 Joshua has Won " + aComputer.warsWon.ToString() + " War");
         }
 
 

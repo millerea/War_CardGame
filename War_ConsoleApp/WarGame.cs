@@ -14,9 +14,11 @@ namespace War_ConsoleApp
         {
             bool response = false;
 
-            Console.WriteLine("Greetings professor faulken, would you like to play a game?");
-            Console.WriteLine("How about we play 52 card War?");
-            Console.WriteLine("Yes/No? ");
+            SlowPrint(100, "\n  GREETINGS PROFESSOR FALKEN.\n");
+            SlowPrint(100, "  HOW ARE YOU FEELING TODAY?\n");
+            SlowPrint(100, "  WOULD YOU LIKE TO PLAY A GAME?\n");
+            SlowPrint(100, "  HOW ABOUT WE PLAY 52 CARD WAR?\n");
+            SlowPrint(200, "  Yes/No?\n");
 
             string typedLine = Console.ReadLine().ToLower();
 
@@ -31,12 +33,16 @@ namespace War_ConsoleApp
             if (typedLine.ToLower().Equals("yes"))
             {
                 response = true;
-                Console.WriteLine("yes, 1,2,3,4 I declare WAR");
+                Console.WriteLine("Launching Global Thermo Nuclear WAR");
             }
             else
             {
-                Console.WriteLine("You chose not to play.");
-                Console.WriteLine("Have a nice day, God Bless.");
+                Console.WriteLine("You declined to play war.\n");
+
+                SlowPrint(150, "A STRANGE GAME.  THE ONLY WINNING MOVE IS NOT TO PLAY.\n");
+                SlowPrint(150, "HOW ABOUT A NICE GAME OF CHESS?\n");
+
+                Console.WriteLine("Have a nice day!");
             }
 
             return response;
@@ -381,6 +387,15 @@ namespace War_ConsoleApp
             }
 
             mTime -= 1;
+        }
+
+        private static void SlowPrint(int aDelay, string str)
+        {
+            foreach (char c in str)
+            {
+                Console.Write(c);
+                Thread.Sleep(aDelay);
+            }
         }
 
         private int mTime = 5;
