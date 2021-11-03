@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Card.cs" />
     <Compile Include="Deck.cs" />
+    <Compile Include="OutputText.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="WarMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
