@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using System.Timers;
+using System.Threading;
 
 namespace War_ConsoleApp
 {
@@ -13,7 +14,8 @@ namespace War_ConsoleApp
         {
             bool response = false;
 
-            Console.WriteLine("Do you want to play 52 card War?");
+            Console.WriteLine("Greetings professor faulken, would you like to play a game?");
+            Console.WriteLine("How about we play 52 card War?");
             Console.WriteLine("Yes/No? ");
 
             string typedLine = Console.ReadLine().ToLower();
@@ -52,9 +54,13 @@ namespace War_ConsoleApp
             //Populate start
             //Populate actions
 
+            this.mOutput = new OutputText();
+            mOutString += "Starting new WarGame...\n";
+            
             //TODO define a deck of cards
             this.mDeck = new Deck();
             this.mDeck.FillDeck();
+
             //deck.PrintDeck(); //Deck prints and have a full deck
 
             List<Card> cardDeck = this.mDeck.GetDeck();
@@ -65,9 +71,9 @@ namespace War_ConsoleApp
             //Converting from a list/deck of cards into seperate queues for players
             Queue<Card>[] aDealtDeck = this.mDeck.SplitDeck(cardDeck);
 
-            //Begin game with two players, Player 1 is Person, Player 2 is AI
+            //Begin game with two players, Player 1 is Person, Player 2 is Joshua
             mPlayerOne = new Player("Player", aDealtDeck[0]);
-            mPlayerTwo = new Player("AI", aDealtDeck[1]);
+            mPlayerTwo = new Player("Joshua", aDealtDeck[1]);
 
             mTimer.Interval = 1000;
             mTimer.Elapsed += myTimer_Tick;
@@ -79,43 +85,65 @@ namespace War_ConsoleApp
 
         private void RunGame(Player aPlayerOne, Player aPlayerTwo)
         {
-            Console.WriteLine("Game Starting...");
-
+            Console.Clear();
+            int cycles = 0;
             //Per https://www.thesprucecrafts.com/war-card-game-rules-411145
             //Winning
             //The first player to win the entire deck of cards is the winner. 
             //Alternatively, because winning the entire deck can take a long time, 
             //the first player to win three wars is the winner. 
 
-            while ((aPlayerOne.playerHand.Count() > 0) && (aPlayerTwo.playerHand.Count() > 0) && 
+            while (cycles < 1000 && (aPlayerOne.playerHand.Count() > 0) && (aPlayerTwo.playerHand.Count() > 0) && 
                 aPlayerOne.warsWon < 3 && aPlayerTwo.warsWon < 3)
             {
-                Console.WriteLine("\n");
                 List<string> resultsReturned = RunSingleRound(aPlayerOne.playerHand, aPlayerTwo.playerHand);
 
                 if (resultsReturned != null)
                 {
-                    Console.WriteLine(resultsReturned.ElementAt(0) + " WON ");
-                    Console.WriteLine(resultsReturned.ElementAt(1));
+                    mOutString+=resultsReturned.ElementAt(0) + " WON ," + resultsReturned.ElementAt(1) + "\n";
                 }
 
-                Console.WriteLine("\n Are you ready for the next round?  Press Enter");
+                if (!mSimulate)
+                {
+                    // Start a thread that waits on the ManualResetEvent.
+                    Thread t5 = new Thread(ThreadProc);
+                    t5.Name = "Thread_5";
+                    t5.Start();
+
+                    string input = Console.ReadLine();
+
+                    if (input.ToLower().Equals("s"))
+                    {
+                        mSimulate = true;
+                    }
+                }                
+                Console.Clear();
+                cycles++;
             }
-
-
 
             if (aPlayerOne.warsWon == 3)
             {
-                Console.WriteLine("PLAYER WINS, 3 Wars won");
-                Console.WriteLine("Player Card count: " + aPlayerOne.playerHand.Count.ToString());
-                Console.WriteLine("AI Card count: " + aPlayerTwo.playerHand.Count.ToString());
+                mOutString += "\n";
+                mOutString += "PLAYER WINS, 3 Wars Won!!!\n";
+                mOutString += "Player Card count: " + aPlayerOne.playerHand.Count.ToString() + "\n";
+                mOutString += "Joshua Card count: " + aPlayerTwo.playerHand.Count.ToString() + "\n";
+
             }
             else if (aPlayerTwo.warsWon == 3)
             {
-                Console.WriteLine("AI WINS, 3 Wars won");
-                Console.WriteLine("AI Card count: " + aPlayerTwo.playerHand.Count.ToString());
-                Console.WriteLine("Player Card count: " + aPlayerOne.playerHand.Count.ToString());
+                mOutString += "\n";
+                mOutString += "Joshua WINS, 3 Wars Won!!!\n";
+                mOutString += "Joshua Card count: " + aPlayerTwo.playerHand.Count.ToString() + "\n";
+                mOutString += "Player Card count: " + aPlayerOne.playerHand.Count.ToString() + "\n";
             }
+
+            else if (cycles >= 1000)
+            {
+                mOutString += "\n";
+                mOutString += "We have a draw, exceeded 1000 cycle hands of war with Joshua on the WOPR";
+            }
+            mOutput.WriteLine(mOutString);
+            mOutput.EndLine();
         }
 
         private List<string> RunSingleRound(Queue<Card> playerQueue, Queue<Card> computerQueue)
@@ -126,11 +154,11 @@ namespace War_ConsoleApp
 
             Card playerOneCard = playerQueue.Dequeue();
             Card computerCard = computerQueue.Dequeue();
-
+            
             if (playerOneCard.mValue > computerCard.mValue)
             {
                 string condition = "Player " + mDeck.Name(playerOneCard.mValue, playerOneCard.mSuite);
-                condition += " Beats AI ";
+                condition += " Beats Joshua ";
                 condition += mDeck.Name(computerCard.mValue, computerCard.mSuite);
 
                 mResults.Insert(0, mPlayerOne.getPlayerName());
@@ -138,10 +166,13 @@ namespace War_ConsoleApp
 
                 playerQueue.Enqueue(playerOneCard);
                 playerQueue.Enqueue(computerCard);
+
+                mOutput.CardPrintConsoleOutput(playerOneCard, computerCard, mResults);
+                mOutput.WriteCurrentMetrics(mPlayerOne, mPlayerTwo);
             }
             else if (playerOneCard.mValue < computerCard.mValue)
             {
-                string condition = "AI " + mDeck.Name(computerCard.mValue, computerCard.mSuite);
+                string condition = "Joshua " + mDeck.Name(computerCard.mValue, computerCard.mSuite);
                 condition += " Beats Player ";
                 condition += mDeck.Name(playerOneCard.mValue, playerOneCard.mSuite);
 
@@ -150,15 +181,28 @@ namespace War_ConsoleApp
 
                 computerQueue.Enqueue(playerOneCard);
                 computerQueue.Enqueue(computerCard);
+
+                mOutput.CardPrintConsoleOutput(playerOneCard, computerCard, mResults);
+                mOutput.WriteCurrentMetrics(mPlayerOne, mPlayerTwo);
             }
             else if (playerOneCard.mValue == computerCard.mValue)
             {
+                Console.Clear();
                 //War condition
-                Console.WriteLine("1, 2, 3, 4 I Declare War...");
+                
+
+                string condition = "Player " + mDeck.Name(playerOneCard.mValue, playerOneCard.mSuite);
+                condition += " Ties Joshua ";
+                condition += mDeck.Name(computerCard.mValue, computerCard.mSuite);
+
+                mResults.Insert(0, "WAR");
+                mResults.Insert(1, condition);
+                mOutput.CardPrintConsoleOutput(playerOneCard, computerCard, mResults);
+                Console.WriteLine("                            *** WAR DECLARED ***");
 
                 mResults = AdjudicateWar(playerQueue, computerQueue);
 
-                if (mResults.ElementAt(0).Contains("AI"))
+                if (mResults.ElementAt(0).Contains("Joshua"))
                 {
                     computerQueue.Enqueue(playerOneCard);
                     computerQueue.Enqueue(computerCard);
@@ -168,9 +212,10 @@ namespace War_ConsoleApp
                     playerQueue.Enqueue(playerOneCard);
                     playerQueue.Enqueue(computerCard);
                 }
+
+                mOutput.WriteCurrentMetrics(mPlayerOne, mPlayerTwo);
             }
 
-            
             return mResults;
         }
 
@@ -245,14 +290,14 @@ namespace War_ConsoleApp
                     if (!playerOut && !computerOut)
                     {
                         mResults.Insert(0, "Player");
-                        mResults.Insert(1, mDeck.Name(playerCard.mValue, playerCard.mSuite) +
-                                        " beats AI " + mDeck.Name(computerCard.mValue, computerCard.mSuite));
+                        mResults.Insert(1, "Player " + mDeck.Name(playerCard.mValue, playerCard.mSuite) +
+                                        " beats Joshua " + mDeck.Name(computerCard.mValue, computerCard.mSuite));
                     }
                     else if (computerOut)
                     {
                         mResults.Insert(0, "Player Wins Game!!!");
-                        mResults.Insert(1, mDeck.Name(playerCard.mValue, playerCard.mSuite) +
-                                        " beats AI " + mDeck.Name(computerCard.mValue, computerCard.mSuite));
+                        mResults.Insert(1, "Player " + mDeck.Name(playerCard.mValue, playerCard.mSuite) +
+                                        " beats Joshua " + mDeck.Name(computerCard.mValue, computerCard.mSuite));
                     }
 
                     for (int z = sixCards.Count; z > 0 ; z--)
@@ -270,14 +315,14 @@ namespace War_ConsoleApp
 
                     if (!playerOut && !computerOut)
                     {
-                        mResults.Insert(0, "AI");
-                        mResults.Insert(1, mDeck.Name(computerCard.mValue, computerCard.mSuite) +
+                        mResults.Insert(0, "Joshua");
+                        mResults.Insert(1, "Joshua " + mDeck.Name(computerCard.mValue, computerCard.mSuite) +
                                         " beats Player " + mDeck.Name(playerCard.mValue, playerCard.mSuite));
                     }
                     else if (playerOut)
                     {
-                        mResults.Insert(0, "AI Wins Game!!!");
-                        mResults.Insert(1, mDeck.Name(computerCard.mValue, computerCard.mSuite) +
+                        mResults.Insert(0, "Joshua Wins Game!!!");
+                        mResults.Insert(1, "Joshua " + mDeck.Name(computerCard.mValue, computerCard.mSuite) +
                                         " beats Player " + mDeck.Name(playerCard.mValue, playerCard.mSuite));
                     }
 
@@ -292,19 +337,41 @@ namespace War_ConsoleApp
                 {
                     sixCards.Enqueue(playerCard);
                     sixCards.Enqueue(computerCard);
+
+                    string condition = "Player " + mDeck.Name(playerCard.mValue, playerCard.mSuite);
+                    condition += " Ties Joshua ";
+                    condition += mDeck.Name(computerCard.mValue, computerCard.mSuite);
+
+                    mResults.Insert(0, "WAR");
+                    mResults.Insert(1, condition);
+                    mOutput.CardPrintConsoleOutput(playerCard, computerCard, mResults);
+                    Console.WriteLine("                            *** WAR DECLARED ***");
                 }
+
+                mOutput.CardPrintConsoleOutput(playerCard, computerCard, mResults);
+
             } while (!exit && playerCard.mValue == computerCard.mValue);
 
             return mResults;
         }
 
 
+        private static void ThreadProc()
+        {
+            string name = Thread.CurrentThread.Name;
+
+            Console.WriteLine("\nReady for the next round?  Press ENTER for the next round...");
+            Console.WriteLine("Ready to simulate the end?  Type S and Press ENTER");
+
+            mre.WaitOne();
+
+        }
 
         private void myTimer_Tick(object sender, EventArgs e)
         {
             if (mTime > 0)
             {
-                Console.WriteLine("Game starting in: " + (mTime).ToString());
+                Console.WriteLine("War Game starting in: " + (mTime).ToString());
             }
             else
             {
@@ -322,5 +389,10 @@ namespace War_ConsoleApp
         private Player mPlayerTwo = null;
         private Deck mDeck = null;
         private List<string> mResults = new List<string>();
+
+        private OutputText mOutput;
+        private string mOutString;
+        private bool mSimulate = false;
+        private static ManualResetEvent mre = new ManualResetEvent(false);
     }
 }
