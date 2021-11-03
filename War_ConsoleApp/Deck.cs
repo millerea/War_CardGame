@@ -24,8 +24,6 @@ namespace War_ConsoleApp
                 int val = i % 13 + 2;
                 mCards.Add(new Card(val, suite));
             }
-
-            Console.WriteLine("AI has the deck of cards");
         }
 
         public void PrintDeck()
@@ -50,9 +48,6 @@ namespace War_ConsoleApp
                 aDeck[l] = aDeck[j];
                 aDeck[j] = tE;
             }
-
-            Console.WriteLine("AI has shuffled the cards");
-
             return aDeck;
         }
 
@@ -73,9 +68,6 @@ namespace War_ConsoleApp
                     twoListArray[1].Enqueue(aDeck[i]);
                 }
             }
-
-            Console.WriteLine("AI has split the deck");
-
             return twoListArray;
         }
 
