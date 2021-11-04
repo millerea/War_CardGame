@@ -10,14 +10,12 @@ namespace War_ConsoleApp
 {
     class OutputText
     {
-        public void StartWindowSize()
+        public OutputText()
         {
-            int winHeight = Console.LargestWindowHeight; //64
-            int winWidth = Console.LargestWindowWidth;  //160
 
         }
 
-        public void CardPrintConsoleOutput(Card aPlayerCard, Card aComputerCard, List<string> aResults)
+        public void cardPrintConsoleOutput(Card aPlayerCard, Card aComputerCard, List<string> aResults)
         {
             //Print player
             int pLength = aPlayerCard.mValue.ToString().Length;
@@ -35,8 +33,10 @@ namespace War_ConsoleApp
 
             List<string> output = new List<string>();
             output.Add("\n");
+            output.Add("\n");
+            output.Add("------------------------------------------------------------------------");
             output.Add("                           WOPR WarGame                         ");
-            output.Add("----------------------------------------------------------------");
+            output.Add("------------------------------------------------------------------------");
             output.Add("                           Player vs. Joshua                    ");
             output.Add("        --------------------                --------------------");
             output.Add("        --                --                --                --");
@@ -59,7 +59,7 @@ namespace War_ConsoleApp
             }
         }
 
-        public void WriteCurrentMetrics(Player aPlayer, Player aComputer)
+        public void writeCurrentMetrics(Player aPlayer, Player aComputer)
         {
             Console.WriteLine("                 Player cards remaining: " + aPlayer.playerHand.Count);
             Console.WriteLine("                 Player has Won " + aPlayer.warsWon.ToString() + " War\n");
@@ -68,20 +68,42 @@ namespace War_ConsoleApp
         }
 
 
-        public void WriteLine(string aLine)
+        public void writeLine(string aLine)
         {
-            StreamWriter sw = new StreamWriter(fs);
-            sw.WriteLine(aLine);
+            //string root = Directory.GetCurrentDirectory();
+            //string subdir = root + "\\Output\\";
+            //// If directory does not exist, create it. 
+            //if (!Directory.Exists(root))
+            //{
+            //    Directory.CreateDirectory(subdir);
+            //}
+            //if (!Directory.Exists(subdir))
+            //{
+            //    Directory.CreateDirectory(subdir);
+            //}
+
+            //fs = new FileStream("./Output/WarGame_Output.txt", FileMode.Append);
+
+            //if (fs != null)
+            //{
+            //    StreamWriter sw = new StreamWriter(fs);
+            //    sw.WriteLine(aLine);
+            //    Console.WriteLine(aLine);
+            //}
+
             Console.WriteLine(aLine);
         }
 
-        public void EndLine()
+        public void endLine()
         {
-            StreamWriter sw = new StreamWriter(fs);
-            sw.WriteLine("Thank you for playing...");
-            sw.Close();
+            //if (fs != null)
+            //{
+            //    StreamWriter sw = new StreamWriter(fs);
+            //    sw.WriteLine("Thank you for playing...");
+            //    sw.Close();
+            //}
         }
 
-        private FileStream fs = new FileStream("./Output/WarGame_Output.txt", FileMode.Append);
+        private FileStream fs;
     }
 }

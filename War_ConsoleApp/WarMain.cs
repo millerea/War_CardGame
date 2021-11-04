@@ -11,35 +11,26 @@ namespace War_ConsoleApp
     {
         static void Main(string[] args)
         {
-            string root = Directory.GetCurrentDirectory();
-            string subdir = root + "\\Output\\";
-            // If directory does not exist, create it. 
-            if (!Directory.Exists(root))
-            {
-                Directory.CreateDirectory(subdir);
-            }
-            if(!Directory.Exists(subdir))
-            {
-                Directory.CreateDirectory(subdir);
-                //Console.WriteLine("Directory created: " + subdir);
-            }
+            int winHeight = Console.LargestWindowHeight;
+            int winWidth = Console.LargestWindowWidth;
 
-            //TODO define controller / game play
-            //TODO - how to deal
-            //TODO - how to play 1v1
-            //TODO - how to compare drawn cards?
-            //TODO what else are you missing?
+            double wDouble =  winWidth*.5;
+            double hDouble = winHeight * .75;
+            Console.WindowWidth = (int) wDouble;
+            Console.WindowHeight = (int) hDouble;
 
             WarGame game = new WarGame();
-            bool val = game.PromptWarGame(); //TODO put this back in for prompting
-            //bool val = true;
-            if (val == true)//TODO put back in for prompting
+            bool val = game.promptWarGame();
+
+            while (val)
             {
-                game.NewGame();
+                game.newGame(true);
+                val = game.runGame();
             }
-            else
+
+            if (!val)
             {
-                //No game END / ESC
+                Environment.Exit(0);
             }
 
             Console.Read();

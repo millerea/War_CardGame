@@ -8,33 +8,30 @@ namespace War_ConsoleApp
 {
     public class Deck
     {        
-        public List<Card> GetDeck()
+        public List<Card> getDeck()
         {
             return mCards;
         }
 
-        public void FillDeck()
+        public void fillDeck()
         {
-            //Can use a single loop utilising the mod operator % and Math.Floor
-            //Using divition based on 13 cards in a suited
             for (int i = 0; i < 52; i++)
             {
                 War_ConsoleApp.Card.Suite suite = (War_ConsoleApp.Card.Suite)(Math.Floor((decimal)i / 13));
-                //Add 2 to value as a cards start a 2
                 int val = i % 13 + 2;
                 mCards.Add(new Card(val, suite));
             }
         }
 
-        public void PrintDeck()
+        public void printDeck()
         {
             foreach (Card card in this.mCards)
             {
-                Console.WriteLine(Name(card.mValue, card.mSuite));
+                Console.WriteLine(name(card.mValue, card.mSuite));
             }
         }
 
-        public List<Card> ShuffleDeck(List<Card> aDeck, int n)
+        public List<Card> shuffleDeck(List<Card> aDeck, int n)
         {
             DateTime dateTime = DateTime.Now;
             int timeMsSinceMidnight = (int)dateTime.TimeOfDay.TotalMilliseconds;
@@ -51,7 +48,7 @@ namespace War_ConsoleApp
             return aDeck;
         }
 
-        public Queue<Card>[] SplitDeck(List<Card> aDeck)
+        public Queue<Card>[] splitDeck(List<Card> aDeck)
         {
             Queue<Card>[] twoListArray = new Queue<Card>[2];
             twoListArray[0] = new Queue<Card>();
@@ -74,14 +71,12 @@ namespace War_ConsoleApp
 
 
 
-        public string Name(int aValue, War_ConsoleApp.Card.Suite aSuite)
+        public string name(int aValue, War_ConsoleApp.Card.Suite aSuite)
         {
-            return NamedValue(aValue).ToString() + " of " + aSuite.ToString();
+            return namedValue(aValue).ToString() + " of " + aSuite.ToString();
         }
 
-        //Used to get full name, also usefull 
-        //if you want to just get the named value
-        private string NamedValue(int aValue)
+        private string namedValue(int aValue)
         {
             string name = string.Empty;
             switch (aValue)
