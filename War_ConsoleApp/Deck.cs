@@ -4,37 +4,82 @@ using System.Linq;
 using System.Text;
 
 
-
-public class Card
+namespace War_ConsoleApp
 {
-    public enum Suites
-    {
-        Hearts = 0,
-        Diamonds,
-        Clubs,
-        Spades
-    }
+    public class Deck
+    {        
+        public List<Card> getDeck()
+        {
+            return mCards;
+        }
 
-    public int Value
-    {
-        get;
-        set;
-    }
+        public void fillDeck()
+        {
+            for (int i = 0; i < 52; i++)
+            {
+                War_ConsoleApp.Card.Suite suite = (War_ConsoleApp.Card.Suite)(Math.Floor((decimal)i / 13));
+                int val = i % 13 + 2;
+                mCards.Add(new Card(val, suite));
+            }
+        }
 
-    public Suites Suite
-    {
-        get;
-        set;
-    }
+        public void printDeck()
+        {
+            foreach (Card card in this.mCards)
+            {
+                Console.WriteLine(name(card.mValue, card.mSuite));
+            }
+        }
 
-    //Used to get full name, also usefull 
-    //if you want to just get the named value
-    public string NamedValue
-    {
-        get
+        public List<Card> shuffleDeck(List<Card> aDeck, int n)
+        {
+            DateTime dateTime = DateTime.Now;
+            int timeMsSinceMidnight = (int)dateTime.TimeOfDay.TotalMilliseconds;
+            Random rand = new Random(timeMsSinceMidnight);
+   
+            for (int l = n-1; l > 0; l--)
+            {
+                int j = rand.Next(0, l + 1);
+
+                Card tE = aDeck[l];
+                aDeck[l] = aDeck[j];
+                aDeck[j] = tE;
+            }
+            return aDeck;
+        }
+
+        public Queue<Card>[] splitDeck(List<Card> aDeck)
+        {
+            Queue<Card>[] twoListArray = new Queue<Card>[2];
+            twoListArray[0] = new Queue<Card>();
+            twoListArray[1] = new Queue<Card>();
+            
+            for (int i = 0; i < 52; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    twoListArray[0].Enqueue(aDeck[i]);
+                }
+                else
+                {
+                    twoListArray[1].Enqueue(aDeck[i]);
+                }
+            }
+            return twoListArray;
+        }
+
+
+
+
+        public string name(int aValue, War_ConsoleApp.Card.Suite aSuite)
+        {
+            return namedValue(aValue).ToString() + " of " + aSuite.ToString();
+        }
+
+        private string namedValue(int aValue)
         {
             string name = string.Empty;
-            switch (Value)
+            switch (aValue)
             {
                 case (14):
                     name = "Ace";
@@ -49,50 +94,13 @@ public class Card
                     name = "Jack";
                     break;
                 default:
-                    name = Value.ToString();
+                    name = aValue.ToString();
                     break;
             }
-
             return name;
         }
-    }
 
-    public string Name
-    {
-        get
-        {
-            return NamedValue + " of  " + Suite.ToString();
-        }
-    }
+        private List<Card> mCards = new List<Card>();
 
-    public Card(int Value, Suites Suite)
-    {
-        this.Value = Value;
-        this.Suite = Suite;
-    }
-}
-
-public class Deck
-{
-    public List<Card> Cards = new List<Card>();
-    public void FillDeck()
-    {
-        //Can use a single loop utilising the mod operator % and Math.Floor
-        //Using divition based on 13 cards in a suited
-        for (int i = 0; i < 52; i++)
-        {
-            Card.Suites suite = (Card.Suites)(Math.Floor((decimal)i / 13));
-            //Add 2 to value as a cards start a 2
-            int val = i % 13 + 2;
-            Cards.Add(new Card(val, suite));
-        }
-    }
-
-    public void PrintDeck()
-    {
-        foreach (Card card in this.Cards)
-        {
-            Console.WriteLine(card.Name);
-        }
     }
 }
